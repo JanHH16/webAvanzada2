@@ -3,7 +3,6 @@
 Ingenieria Web Avanzada | OII436-1
 
 - Integrantes: Jan Houter y Camila Torres
-- Repositorio: https://github.com/JanHH16/webAvanzada2
 
 ## Entorno virtual
 
@@ -88,3 +87,21 @@ Desafio breve: se cambio la llamada a `buscar(consulta, top_k=3)` y el programa 
 Observacion: en T4 aparecen dos mensajes porque `buscar` imprime el aviso y devuelve una lista vacia, y luego el bloque principal imprime el mensaje de sin coincidencias.
 
 ## Respuestas
+
+**Pregunta 1: ¿Para qué sirve BeautifulSoup y cómo se diferencia de requests?**  
+BeautifulSoup es una librería de Python orientada al análisis y procesamiento de estructuras HTML y XML, que facilita la navegación e inspección del árbol DOM para extraer datos específicos mediante selectores. La diferencia fundamental es que `requests` se limita a gestionar la comunicación HTTP enviando peticiones y descargando la respuesta del servidor, mientras que BeautifulSoup toma el código HTML resultante y permite filtrar e interrogar sus elementos.
+
+**Pregunta 2: ¿Qué riesgo existe al depender de selectores HTML específicos si el sitio cambia?**  
+El principal riesgo radica en la fragilidad y acoplamiento del *scraper* con la estructura del sitio web. Si los desarrolladores de la página modifican el diseño, cambian las clases CSS, los identificadores o la jerarquía de las etiquetas HTML, los selectores definidos dejarán de encontrar los elementos objetivo, ocasionando errores en la ejecución o la extracción de registros vacíos e incompletos.
+
+**Pregunta 3: ¿Por qué normalizar los títulos antes de implementar la búsqueda?**  
+Garantiza que la búsqueda no falle por variaciones ortográficas superficiales, como el uso de mayúsculas o espacios extra, permitiendo que las consultas de los usuarios coincidan de forma consistente con los títulos indexados.
+
+**Pregunta 4: En el código entregado, ¿qué función cumple `fit_transform()` sobre los títulos y por qué se usa `transform()` para la consulta?**  
+En los títulos, la función `fit_transform()` cumple un doble propósito: primero analiza la colección completa para aprender el vocabulario de términos únicos y luego genera la matriz numérica TF-IDF. Para la consulta ingresada por el usuario se utiliza únicamente `transform()`, ya que esta debe ser proyectada en el espacio vectorial existente usando exactamente el mismo vocabulario previamente aprendido. Si aplicáramos `fit_transform()` a la consulta, se redefiniría el vocabulario a partir de esa sola frase, rompiendo la dimensión vectorial y haciendo imposible calcular la similitud con la matriz de títulos.
+
+**Pregunta 5: Si dos libros obtienen similitudes de 0.75 y 0.20 para la misma consulta, ¿cuál se muestra primero? Explique qué indica una puntuación cercana a cero.**  
+Se muestra primero el libro con similitud 0.75, porque el sistema ordena los resultados de mayor a menor similitud del coseno. Una puntuacion cercana a 0 indica que la consulta y el titulo comparten muy pocos términos del vocabulario, o ninguno si es exactamente 0. Esto no significa que los textos no estén relacionados por significado, solo que no coinciden por palabras.
+ 
+**Pregunta 6: ¿Qué limitación tiene buscar solo por palabras presentes en títulos mediante TF-IDF? Proponga una mejora concreta.**  
+La mayor limitación del enfoque TF-IDF aplicado exclusivamente a títulos es que depende de la coincidencia exacta de palabras clave en un texto muy breve, sin comprender la semántica, sinónimos ni el contexto del libro. Como mejora concreta, se propone ampliar el índice agregando la sinopsis o descripción completa de las obras, o bien migrar a un modelo de búsqueda semántica mediante *embeddings* de texto (como SBERT), lo que permitiría recuperar libros por afinidad conceptual aunque no compartan exactamente los mismos términos.
